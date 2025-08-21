@@ -1,0 +1,13 @@
+{% extends 'base/diary_base.html' %}
+
+{% block body %}
+    <h2>{{ page.title }}</h2>
+    <p>{{ page.page_date }}</p>
+    <p>{{ page.body | linebreaksbr }}</p>
+    
+    <a href="{% url 'diary:page_update' page.id %}">編集する</a>
+    <br>
+    <a href="{% url 'diary:page_delete' page.id %}">削除する</a>
+    <br>
+    <a href="{% url 'diary:page_list' %}">日記一覧に戻る</a>
+{% endblock %}
