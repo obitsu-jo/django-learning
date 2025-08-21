@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os  # 追加
+import dj_database_url # 追加
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,13 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*_5@+_vg3c+5q#jls4mmd3%&3sx%0$kbiqvn$_ck1(sf3a!6u@'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-*_5@+_vg3c+5q#jls4mmd3%&3sx%0$kbiqvn$_ck1(sf3a!6u@')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = []
 
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 
@@ -42,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -79,6 +84,14 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# もしRenderの環境なら、PostgreSQLの設定に上書きする
+if 'RENDER' in os.environ:
+    # データベースの接続情報を環境変数 DATABASE_URL から取得
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=True,
+    )
 
 
 # Password validation
@@ -128,3 +141,9 @@ LOGOUT_REDIRECT_URL = '/login/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+# collectstaticで集める先のディレクトリを指定
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# 本番で効率よく配信するための仕組みを指定
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
