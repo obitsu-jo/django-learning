@@ -1,0 +1,12 @@
+{% extends 'base/diary_base.html' %}
+
+{% block body %}
+    <h2>ログアウト</h2>
+    <p>本当にログアウトしますか？</p>
+
+    <form action="{% url 'accounts:logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">ログアウト</button>
+    </form>
+    <a href="{% url 'diary:index' %}" class="btn btn-secondary">キャンセル</a>
+{% endblock %}

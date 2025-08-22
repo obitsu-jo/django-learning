@@ -3,12 +3,11 @@
 {% block body %}
     <p>{{ datetime_now }}</p>
     <br>
-    <a href="{% url 'diary:page_create' %}">新しい日記を作成</a>
+    <a href="{% url 'diary:page_create' %}" class="btn btn-primary">新しい日記を作成</a>
     <br>
-    <a href="{% url 'diary:page_list' %}">日記一覧</a>
+    <a href="{% url 'diary:page_list' %}"  class="btn btn-primary">日記一覧</a>
     <br>
-    <form action="{% url 'accounts:logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">ログアウト</button>
-    </form>
+    <a href="{% url 'accounts:confirm_logout' %}" class="btn btn-secondary">ログアウト</a>
+    <br>
+    <a href="{% url 'accounts:user_delete' %}"  class="btn btn-secondary">アカウント削除</a>
 {% endblock %}
